@@ -13,20 +13,26 @@ class Frontier(object):
         self.config = config
         self.to_be_downloaded = list()
         
-        if not os.path.exists(self.config.save_file) and not restart:
+        # if shelve doesnt exist and no restart, there is nothing
+        if not os.path.exists(self.config.save_file + ".db") and not restart: # TODO: PLEASE DELETE THE ".db"
             # Save file does not exist, but request to load save.
             self.logger.info(
                 f"Did not find save file {self.config.save_file}, "
                 f"starting from seed.")
-        elif os.path.exists(self.config.save_file) and restart:
+        
+        # if shelve does exist and restart, run everything and replace old shelves
+        elif os.path.exists(self.config.save_file + ".db") and restart: # TODO: PLEASE DELETE THE ".db"
             # Save file does exists, but request to start from seed.
             self.logger.info(
                 f"Found save file {self.config.save_file}, deleting it.")
-            os.remove(self.config.save_file)
+            os.remove(self.config.save_file + ".db") # TODO: PLEASE DELETE THE ".db"
+        
         # Load existing save file, or create one if it does not exist.
         self.save = shelve.open(self.config.save_file)
+        
         if restart:
             for url in self.config.seed_urls:
+                print("Frontier: if restart: " + str(url))
                 self.add_url(url)
         else:
             # Set the frontier state with contents of save file.
