@@ -21,15 +21,15 @@ def scraper(url, resp):
     return [link for link in links if is_valid(link)]
 
 def is_large(response_text): # We need to find a measure by which to decide if large/irrelevant
-    #hello
+    #hello 
     return False
 
 def is_dead_url(response_text):
-    #hello
+    #hello 
     return False
 
 def already_parsed(response_text):
-    #hello
+    #hello 
     return False
 
 def extract_next_links(url, resp):
@@ -47,7 +47,7 @@ def extract_next_links(url, resp):
         # do nothing
         pass
     else:
-        return_urls.extend([a["href"] for a in soup_text.find_all('a', href=True)])
+        return_urls = [a["href"] for a in soup_text.find_all('a', href=True)]
     
 
     # for link in return_urls:
@@ -62,11 +62,11 @@ def extract_next_links(url, resp):
 
     # Functionality to implement: 
     # How many unique pages did we find, discard the fragment
-    # What is the longest page in number of words
-    # What are the 50 most common words in all the pages - ignore stopwords
+    # What is the longest page in number of words #ritika
+    # What are the 50 most common words in all the pages - ignore stopwords #ritika
 
     # Go through web page content -> tokenize for words, etc. 
-    # if you find a URL, check is_valid(url), if yes, add to list
+    # if you find a URL, check is_valid(url), if yes, add to list -- Rithu
 
     # returns a LIST of URLS 
 
