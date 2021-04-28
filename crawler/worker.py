@@ -3,6 +3,7 @@ from threading import Thread
 from utils.download import download
 from utils import get_logger
 from scraper import scraper
+from scraper import complete_logs
 import time
 
 
@@ -26,5 +27,6 @@ class Worker(Thread):
             scraped_urls = scraper(tbd_url, resp)
             for scraped_url in scraped_urls:
                 self.frontier.add_url(scraped_url)
+            complete_logs() # WE ADDED THIS
             self.frontier.mark_url_complete(tbd_url)
             time.sleep(self.config.time_delay)
