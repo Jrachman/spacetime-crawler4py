@@ -2,9 +2,6 @@ import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import logging
-
-logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-
 ###############################################################
 
 ### GLOBAL VARIABLES ###
@@ -53,6 +50,8 @@ token_frequency_masterlist = dict() # No duplicates
 ########################
 
 def scraper(url, resp):
+    logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+
     current_url = url
     logging.debug("************************")
     logging.debug("NEW SCRAPER CALL on url: " + str(current_url) + " type: " + str(type(current_url)))
@@ -158,8 +157,13 @@ def is_similar(response_tokens):
 
 def get_url_base():
     baseList = current_url.split("/")
-    base = baseList[0] + "//" +  baseList[1]
-    return base
+    if(len(baseList) > 1) {
+        base = baseList[0] + "//" +  baseList[1]
+        return base
+    }
+    logging.error("Current URL: " + current_url + " doesn't have multiple elements")
+    return baseList[0]
+    
 
 def add_tokens_globally(tokens):
     unique_tokens_added = 0
