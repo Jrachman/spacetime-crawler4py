@@ -140,16 +140,26 @@ def is_similar(response_tokens):
     # form a set containing keywords of both strings 
     rvector = set(all_tokens).union(set(response_tokens))
     for w in rvector:
-        if w in all_tokens: temp1.append(1) # create a vector
-        else: temp1.append(0)
-        if w in response_tokens: temp2.append(1)
-        else: temp2.append(0)
+        if w in all_tokens: 
+            temp1.append(1) # create a vector
+        else: 
+            temp1.append(0)
+        if w in response_tokens: 
+            temp2.append(1)
+        else: 
+            temp2.append(0)
+
     c = 0
     
     # cosine formula 
     for i in range(len(rvector)):
         c+= temp1[i]*temp2[i]
-    cosine = c / float((sum(temp1)*sum(temp2))**0.5)
+    
+    denom = float((sum(temp1)*sum(temp2))**0.5)
+    if denom == 0:
+        return False
+
+    cosine = c / denom
     print("similarity: ", cosine)
 
     #TODO: CHECK ON THESE VALUES/IF THEY'RE REASONABLE!!
