@@ -59,14 +59,14 @@ def scraper(url, resp):
     logging.DEBUG("Response status: " + str(resp.status) + ", type: " + str(type(resp.status)))
 
     #POSSIBLE TODO IMPLEMENTATION: 
-    if (len(all_urls_traversed) >= 30000) {
+    if (len(all_urls_traversed) >= 30000):
         #TODO: One final failsafe? Cap the number of links that can be traversed at ~30,000?
         logging.DEBUG("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
         return []
-    }
+    
 
     # IF the url is a new one/ has not been traversed already
-    if url not in all_urls_traversed { 
+    if url not in all_urls_traversed:
         logging.DEBUG("New and unique URL found")
         logging.DEBUG("Response: " + str(resp.content))
         
@@ -84,10 +84,10 @@ def scraper(url, resp):
         # return [link for link in links if is_valid(link)]
         return lst_of_valid_links
 
-    } else { # The URL is one we've seen before
+    else: # The URL is one we've seen before
         logging.DEBUG("URL ALREADY PARSED: " + str(url))
         return []
-    }
+    
     
 
 def is_large(response_text, response_tokens): # We need to find a measure by which to decide if large/irrelevant, 
@@ -95,7 +95,7 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
     logging.DEBUG("Enter method is_large()")
 
     len_tokens = len(response_tokens)
-    soup_text = BeautifulSoup(response_text. 'html.parser')
+    soup_text = BeautifulSoup(response_text, 'html.parser')
 
     # an image to text ratio of the page
     img_elems = soup_text.findall("img")
@@ -203,7 +203,7 @@ def extract_next_links(url, resp):
     return_urls = []
 
     response_text = resp.raw_response.content
-    soup_text = BeautifulSoup(response_text. 'html.parser')
+    soup_text = BeautifulSoup(response_text, 'html.parser')
 
     logging.DEBUG("Article Title:" + soup_text.title)
 
@@ -248,22 +248,22 @@ def complete_logs():
     sorted_tokens = {k: v for k, v in sorted(token_frequency_masterlist.items(), key=(lambda x:x[1]), reverse=True)}
     top_tokens = dict()
     index = 0
-    for key, value in sorted_tokens() {
+    for key, value in sorted_tokens():
         if(index > 50):
             break
         else:
             top_tokens[key] = value
-    }
+    
     logging.INFO("TOP 50 TOKENS: " + str(top_tokens))
     
     ### HOW MANY SUBDOMAINS in the ics.uci.edu domain:
     special_subdomains = dict()
     for key in subdomain_counter.keys():
         if ".ics.uci.edu" in key:
-            logging.DEBUG(key " is in ics.uci.edu subdomain")
+            logging.DEBUG(key + " is in ics.uci.edu subdomain")
             special_subdomains[key] = subdomain_counter[key]
         else:
-            logging.DEBUG("Not in  ics.uci.edu subdomain.")
+            logging.DEBUG("Not in ics.uci.edu subdomain.")
 
     logging.INFO("NUMBER OF SUBDOMAINS OF ics.uci.edu: " + str(len(special_subdomains)))
     logging.INFO(special_subdomains)
