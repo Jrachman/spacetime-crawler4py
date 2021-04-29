@@ -50,7 +50,7 @@ token_frequency_masterlist = dict() # No duplicates
 ########################
 
 def scraper(url, resp):
-    logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
+    # logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO, filename="output.log")
 
     current_url = url
@@ -216,10 +216,10 @@ def extract_next_links(url, resp):
     base = get_url_base()
     if base in subdomain_counter: 
         subdomain_counter[base] = subdomain_counter[base] + 1
-        logging.debug("--subdomain counter incremented-- " + base + " : " + subdomain_counter[base])
+        logging.debug("--subdomain counter incremented-- " + str(base) + " : " + str(subdomain_counter[base]))
     else:
         subdomain_counter[base] = 1
-        logging.debug("--subdomain counter added-- " + base + " : " + subdomain_counter[base])
+        logging.debug("--subdomain counter added-- " + str(base()) + " : " + str(subdomain_counter[base]))
 
     ### TOKENIZE THE TEXT ###
     raw_tokens = tokenize(soup_text.get_text())
@@ -284,13 +284,13 @@ def is_valid(url): # need to change
     # (https needed) ics.uci.edu/hello-world (missing full base and https)
     # (https and base needed) /hello-world (missing base and https)
     url_base = get_url_base()
-    logging.debug("Input URL: "+url)
+    logging.debug("Input URL: "+ str(url))
     try:
         parsed = urlparse(url)
 
-        logging.debug("Parsed scheme :"+parsed.scheme)
-        logging.debug("Parsed netloc: "+parsed.netloc)
-        logging.debug("Parsed path: "+parsed.path)
+        logging.debug("Parsed scheme :"+ str(parsed.scheme))
+        logging.debug("Parsed netloc: "+ str(parsed.netloc))
+        logging.debug("Parsed path: "+ str(parsed.path))
         
         # normalization step (https://<base>/<whatever else>)
         if parsed.scheme not in set(["http", "https"]):
