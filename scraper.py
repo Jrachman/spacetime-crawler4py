@@ -100,7 +100,7 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
     soup_text = BeautifulSoup(response_text, 'html.parser')
 
     # an image to text ratio of the page
-    img_elems = soup_text.findall("img")
+    img_elems = soup_text.find_all("img")
     if (len(img_elems)/len_tokens > 0.5): #TODO: Percent?
         return True    
 
