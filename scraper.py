@@ -138,7 +138,7 @@ def is_similar(response_tokens):
     temp2 = []
 
     # form a set containing keywords of both strings 
-    rvector = all_tokens.union(response_tokens) 
+    rvector = set(all_tokens).union(set(response_tokens))
     for w in rvector:
         if w in all_tokens: temp1.append(1) # create a vector
         else: temp1.append(0)
