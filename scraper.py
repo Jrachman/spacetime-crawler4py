@@ -50,7 +50,8 @@ token_frequency_masterlist = dict() # No duplicates
 ########################
 
 def scraper(url, resp):
-    logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+    logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO, filename="output.log")
 
     current_url = url
     logging.debug("************************")
@@ -67,7 +68,7 @@ def scraper(url, resp):
     # IF the url is a new one/ has not been traversed already
     if url not in all_urls_traversed:
         logging.debug("New and unique URL found")
-        logging.debug("Response: " + str(resp.content))
+        # logging.debug("Response: " + str(resp.content))
         
         all_urls_traversed.append(url)
         all_url_bases.add(get_url_base(current_url))
