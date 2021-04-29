@@ -157,10 +157,10 @@ def is_similar(response_tokens):
 
 def get_url_base():
     baseList = current_url.split("/")
-    if(len(baseList) > 1) {
+    if len(baseList) > 1:
         base = baseList[0] + "//" +  baseList[1]
         return base
-    }
+
     logging.error("Current URL: " + current_url + " doesn't have multiple elements")
     return baseList[0]
     
