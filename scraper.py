@@ -219,7 +219,7 @@ def extract_next_links(url, resp):
         logging.debug("--subdomain counter incremented-- " + str(base) + " : " + str(subdomain_counter[base]))
     else:
         subdomain_counter[base] = 1
-        logging.debug("--subdomain counter added-- " + str(base()) + " : " + str(subdomain_counter[base]))
+        logging.debug("--subdomain counter added-- " + str(base) + " : " + str(subdomain_counter[base]))
 
     ### TOKENIZE THE TEXT ###
     raw_tokens = tokenize(soup_text.get_text())
