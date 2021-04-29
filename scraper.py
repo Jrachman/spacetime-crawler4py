@@ -71,7 +71,7 @@ def scraper(url, resp):
         # logging.debug("Response: " + str(resp.content))
         
         all_urls_traversed.append(url)
-        all_url_bases.add(get_url_base(current_url))
+        all_url_bases.add(get_url_base())
 
         links = extract_next_links(url, resp)
 
