@@ -228,7 +228,7 @@ def extract_next_links(url, resp):
     tokens = [token for token in raw_tokens if not token in config.stopwords] 
 
     ### QUALITY/ETC. CHECKING:
-    if is_dead_url(resp) or is_large(response_text, response_tokens) or is_similar(response_tokens):
+    if is_dead_url(resp) or is_large(response_text, tokens) or is_similar(tokens):
         # return an empty list of links
         logging.debug("URL did not pass preprocessing step. Return [] ")
         return []
