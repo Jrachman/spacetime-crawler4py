@@ -3,11 +3,12 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import logging
 import string
+import config
 ###############################################################
 
 ### GLOBAL VARIABLES ###
 
-stopwords = [
+config.stopwords = [
     "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
     "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", 
     "can't", "cannot", "could", "couldn't",
@@ -30,23 +31,23 @@ stopwords = [
 ]
 
 #CURRENT URL
-current_url = ""
+config.current_url = ""
 
 # Full global list of full urls we've been to
-all_urls_traversed = []
-all_url_bases = set()
+config.all_urls_traversed = []
+config.all_url_bases = set()
 # List of bad links
-all_bad_links = []
+config.all_bad_links = []
 
 # Longest page in number of words
-longest_page = ("null", 0)
+config.longest_page = ("null", 0)
 
 # DICT OF SUBDOMAINS AND NUMBER OF UNIQUE PAGES IN EACH SUBDOMAIN, ALPHABETICALLY
-subdomain_counter = dict()
+config.subdomain_counter = dict()
 
 # MASTERLIST OF TOKENS (TODO: Too much space taken up? Perhaps save top 50 only?)
-token_masterlist = [] # does not contain stopwords, does contain duplicates
-token_frequency_masterlist = dict() # No duplicates
+config.token_masterlist = [] # does not contain stopwords, does contain duplicates
+config.token_frequency_masterlist = dict() # No duplicates
 
 ########################
 
@@ -54,25 +55,25 @@ def scraper(url, resp):
     # logging.basicConfig(filename="run.log", filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
     logging.basicConfig(level=logging.INFO, filename="output.log")
 
-    current_url = url
+    config.current_url = url
     logging.debug("************************")
-    logging.debug("NEW SCRAPER CALL on url: " + str(current_url) + " type: " + str(type(current_url)))
+    logging.debug("NEW SCRAPER CALL on url: " + str(config.current_url) + " type: " + str(type(config.current_url)))
     logging.debug("Response status: " + str(resp.status) + ", type: " + str(type(resp.status)))
 
     #POSSIBLE TODO IMPLEMENTATION: 
-    if (len(all_urls_traversed) >= 30000):
+    if (len(config.all_urls_traversed) >= 30000):
         #TODO: One final failsafe? Cap the number of links that can be traversed at ~30,000?
         logging.debug("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
         return []
     
 
     # IF the url is a new one/ has not been traversed already
-    if url not in all_urls_traversed:
+    if url not in config.all_urls_traversed:
         logging.debug("New and unique URL found")
         # logging.debug("Response: " + str(resp.content))
         
-        all_urls_traversed.append(url)
-        all_url_bases.add(get_url_base())
+        config.all_urls_traversed.append(url)
+        config.all_url_bases.add(get_url_base())
 
         links = extract_next_links(url, resp)
 
@@ -119,11 +120,11 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
 def is_dead_url(resp): # 200 response = continue; 404 = add to bad list
     logging.debug("Enter method is_dead_url()")
     # checks if the url is dead using the requests library 
-    if current_url in all_bad_links:
+    if config.current_url in config.all_bad_links:
         return True
 
     if resp.status != 200: #TODO: Check formatting
-        all_bad_links.append(current_url)
+        config.all_bad_links.append(config.current_url)
         return True
     else: # if it's 200
         return False
@@ -132,7 +133,7 @@ def is_dead_url(resp): # 200 response = continue; 404 = add to bad list
 def is_similar(response_tokens):
     logging.debug("Enter method is_similar()")
     # create a unique token-list by getting keys of token_frequency_masterlist
-    all_tokens = list(token_frequency_masterlist.keys())
+    all_tokens = list(config.token_frequency_masterlist.keys())
     temp1 = []
     temp2 = []
 
@@ -158,12 +159,12 @@ def is_similar(response_tokens):
         return False
 
 def get_url_base():
-    baseList = current_url.split("/")
+    baseList = config.current_url.split("/")
     if len(baseList) > 1:
         base = baseList[0] + "//" +  baseList[1]
         return base
 
-    logging.error("Current URL: " + current_url + " doesn't have multiple elements")
+    logging.error("Current URL: " + config.current_url + " doesn't have multiple elements")
     return baseList[0]
     
 
@@ -172,15 +173,15 @@ def add_tokens_globally(tokens):
     logging.debug("Enter method: add_tokens_globally()")
     # Returns void
     for token in tokens:
-        if token not in token_frequency_masterlist.keys():
+        if token not in config.token_frequency_masterlist.keys():
             unique_tokens_added += 1
             logging.debug("NEW TOKEN")
-            token_masterlist.append(token)
-            token_frequency_masterlist[token] = 1
+            config.token_masterlist.append(token)
+            config.token_frequency_masterlist[token] = 1
         else :
             logging.debug("Old token")
-            token_frequency_masterlist[token] =  token_frequency_masterlist[token]+1
-    logging.debug("Tokens added to masterlists. Total of tokens: " + str(len(token_masterlist)) + 
+            config.token_frequency_masterlist[token] =  config.token_frequency_masterlist[token]+1
+    logging.debug("Tokens added to masterlists. Total of tokens: " + str(len(config.token_masterlist)) + 
                     " | Num of unique tokens from this page: " + str(unique_tokens_added)) 
 
 def tokenize(full_text):
@@ -197,9 +198,9 @@ def tokenize(full_text):
     #tokens = [t for t in word_tokens if len(t) >= 3] # TODO: Consider adding back in? but we remove stopwords later anyway
     
     #Check to see if largest page
-    if(len(tokens) > longest_page[1]):
-        logging.debug("Overrode longest page of " + str(longest_page[1]) + " tokens")
-        longest_page = (current_url, len(tokens))
+    if (len(tokens) > config.longest_page[1]):
+        logging.debug("Overrode longest page of " + str(config.longest_page[1]) + " tokens")
+        config.longest_page = (config.current_url, len(tokens))
 
     logging.debug("Num of tokens: " + str(len(tokens)))
     return tokens
@@ -215,16 +216,16 @@ def extract_next_links(url, resp):
 
     # IDEALLY: no link will be traversed twice 
     base = get_url_base()
-    if base in subdomain_counter: 
-        subdomain_counter[base] = subdomain_counter[base] + 1
-        logging.debug("--subdomain counter incremented-- " + str(base) + " : " + str(subdomain_counter[base]))
+    if base in config.subdomain_counter: 
+        config.subdomain_counter[base] = config.subdomain_counter[base] + 1
+        logging.debug("--subdomain counter incremented-- " + str(base) + " : " + str(config.subdomain_counter[base]))
     else:
-        subdomain_counter[base] = 1
-        logging.debug("--subdomain counter added-- " + str(base) + " : " + str(subdomain_counter[base]))
+        config.subdomain_counter[base] = 1
+        logging.debug("--subdomain counter added-- " + str(base) + " : " + str(config.subdomain_counter[base]))
 
     ### TOKENIZE THE TEXT ###
     raw_tokens = tokenize(soup_text.get_text())
-    tokens = [token for token in raw_tokens if not token in stopwords] 
+    tokens = [token for token in raw_tokens if not token in config.stopwords] 
 
     ### QUALITY/ETC. CHECKING:
     if is_dead_url(resp) or is_large(response_text, response_tokens) or is_similar(response_tokens):
@@ -245,13 +246,13 @@ def extract_next_links(url, resp):
 
 def complete_logs():
     ### UNIQUE PAGES
-    logging.info("NUMBER OF UNIQUE PAGES: " + str(len(all_url_bases)))
+    logging.info("NUMBER OF UNIQUE PAGES: " + str(len(config.all_url_bases)))
 
     ### LONGEST PAGE
-    logging.info("LONGEST PAGE FOUND: url = " + str(longest_page[0]) + " , num of tokens = " + str(longest_page[1]))
+    logging.info("LONGEST PAGE FOUND: url = " + str(config.longest_page[0]) + " , num of tokens = " + str(config.longest_page[1]))
     
     ### TOP 50 most common words
-    sorted_tokens = {k: v for k, v in sorted(token_frequency_masterlist.items(), key=(lambda x:x[1]), reverse=True)}
+    sorted_tokens = {k: v for k, v in sorted(config.token_frequency_masterlist.items(), key=(lambda x:x[1]), reverse=True)}
     top_tokens = dict()
     index = 0
     for key, value in sorted_tokens():
@@ -264,10 +265,10 @@ def complete_logs():
     
     ### HOW MANY SUBDOMAINS in the ics.uci.edu domain:
     special_subdomains = dict()
-    for key in subdomain_counter.keys():
+    for key in config.subdomain_counter.keys():
         if ".ics.uci.edu" in key:
             logging.debug(key + " is in ics.uci.edu subdomain")
-            special_subdomains[key] = subdomain_counter[key]
+            special_subdomains[key] = config.subdomain_counter[key]
         else:
             logging.debug("Not in ics.uci.edu subdomain.")
 
