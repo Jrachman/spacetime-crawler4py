@@ -210,7 +210,7 @@ def extract_next_links(url, resp):
     response_text = resp.raw_response.content
     soup_text = BeautifulSoup(response_text, 'html.parser')
 
-    logging.debug("Article Title:" + soup_text.title)
+    # logging.debug("Article Title:" + soup_text.title)
 
     # IDEALLY: no link will be traversed twice 
     base = get_url_base()
