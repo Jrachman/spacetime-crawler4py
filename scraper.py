@@ -62,8 +62,8 @@ def scraper(url, resp):
     # logging.basicConfig(level=logging.INFO, filename="output.log")
 
     config.current_url = url
-    config.logger.info("************************")
-    config.logger.info("NEW SCRAPER CALL on url: " + str(config.current_url) + " type: " + str(type(config.current_url)))
+    config.logger.info("**************************************")
+    config.logger.info("NEW SCRAPER CALL on url: " + str(config.current_url) + ", traversal no. " + str(len(config.all_urls_traversed)))
     config.logger.info("Response status: " + str(resp.status) + ", type: " + str(type(resp.status)))
     # print("************************")
     # print("NEW SCRAPER CALL on url: " + str(config.current_url) + " type: " + str(type(config.current_url)))
@@ -72,7 +72,7 @@ def scraper(url, resp):
     #POSSIBLE TODO IMPLEMENTATION: 
     if (len(config.all_urls_traversed) >= 30000):
         #TODO: One final failsafe? Cap the number of links that can be traversed at ~30,000?
-        config.logger.info("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
+        config.logger.info("TRAVERSAL LIMIT REACHED (30000 links) -- terminating.")
         # print("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
 
         return []
@@ -85,7 +85,6 @@ def scraper(url, resp):
         # logging.debug("Response: " + str(resp.content))
         
         config.all_urls_traversed.append(url)
-        config.all_url_bases.add(get_url_base())
 
         links = extract_next_links(url, resp)
 
@@ -115,10 +114,12 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
     # an image to text ratio of the page
     img_elems = soup_text.find_all("img")
     if (len(img_elems)/len_tokens > 0.5): #TODO: Percent?
+        config.logger.info("Return True bc img to text ratio > .5")
         return True    
 
     # limit by amount of tokens - overestimate first
     if len(response_tokens) > 1750:
+        config.logger.info("Return True bc greater than 1750 response tokens")
         # should overestimate to make sure we don't throw out good links 
         # thought process:
         # - a 5-page essay is about 2.5k words
@@ -189,11 +190,10 @@ def is_similar(response_tokens):
         return False
 
 def get_url_base():
-    print("in get_url_base()")
     config.logger.info("in get_url_base()")
     baseList = config.current_url.split("/")
-    if len(baseList) > 1:
-        base = baseList[0] + "//" +  baseList[1]
+    if len(baseList) > 2:
+        base = baseList[0] + "//" +  baseList[2]
         return base
 
     config.logger.error("Current URL: \"" + config.current_url + "\" doesn't have multiple elements")
@@ -209,12 +209,12 @@ def add_tokens_globally(tokens):
     for token in tokens:
         if token not in config.token_frequency_masterlist.keys():
             unique_tokens_added += 1
-            config.logger.info("NEW TOKEN")
+            # config.logger.info("NEW TOKEN") # Removed bc log is taking too much space
             #print("NEW TOKEN")
             config.token_masterlist.append(token)
             config.token_frequency_masterlist[token] = 1
         else :
-            config.logger.info("Old token")
+            # config.logger.info("Old token") # Removed bc log is taking up too much space
             #print("Old token")
             config.token_frequency_masterlist[token] =  config.token_frequency_masterlist[token]+1
     config.logger.info("Tokens added to masterlists. Total of tokens: " + str(len(config.token_masterlist)) + 
@@ -257,6 +257,7 @@ def extract_next_links(url, resp):
 
     response_text = resp.raw_response.content
     soup_text = BeautifulSoup(response_text, 'html.parser')
+    config.all_url_bases.add(urldefrag(url).url)
 
     # logging.debug("Article Title:" + soup_text.title)
 
@@ -320,11 +321,10 @@ def complete_logs():
     ### HOW MANY SUBDOMAINS in the ics.uci.edu domain:
     special_subdomains = dict()
     for key in config.subdomain_counter.keys():
-        if ".ics.uci.edu" in key:
-            config.logger.info(key + " is in ics.uci.edu subdomain")
+        if "ics.uci.edu" in key and "informatics." not in key:
+            # config.logger.info(key + " is in ics.uci.edu subdomain")
             special_subdomains[key] = config.subdomain_counter[key]
-        else:
-            config.logger.info("Not in ics.uci.edu subdomain.")
+
 
     config.logger.info("NUMBER OF SUBDOMAINS OF ics.uci.edu: " + str(len(special_subdomains)))
     config.logger.info(special_subdomains)
