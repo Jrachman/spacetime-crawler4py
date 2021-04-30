@@ -27,6 +27,7 @@ class Worker(Thread):
             scraped_urls = scraper(tbd_url, resp)
             for scraped_url in scraped_urls:
                 self.frontier.add_url(scraped_url)
+            self.logger.info("Completed scraping, calling complete_logs()")
             complete_logs() # WE ADDED THIS
             self.frontier.mark_url_complete(tbd_url)
             time.sleep(self.config.time_delay)

@@ -5,8 +5,10 @@ from utils.server_registration import get_cache_server
 from utils.config import Config
 from crawler import Crawler
 
+from scraper import initialize_globals
 
 def main(config_file, restart):
+    initialize_globals()
     cparser = ConfigParser()
     cparser.read(config_file)
     config = Config(cparser)
