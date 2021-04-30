@@ -70,9 +70,9 @@ def scraper(url, resp):
     # print("Response status: " + str(resp.status) + ", type: " + str(type(resp.status)))
 
     #POSSIBLE TODO IMPLEMENTATION: 
-    if (len(config.all_urls_traversed) >= 30000):
-        #TODO: One final failsafe? Cap the number of links that can be traversed at ~30,000?
-        config.logger.info("TRAVERSAL LIMIT REACHED (30000 links) -- terminating.")
+    if (len(config.all_urls_traversed) >= 50000):
+        #TODO: One final failsafe? Cap the number of links that can be traversed at ~50,000?
+        config.logger.info("TRAVERSAL LIMIT REACHED (50000 links) -- terminating.")
         # print("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
 
         return []
@@ -113,6 +113,9 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
 
     # an image to text ratio of the page
     img_elems = soup_text.find_all("img")
+    if len_tokens == 0:
+        return False
+
     if (len(img_elems)/len_tokens > 0.5): #TODO: Percent?
         config.logger.info("Return True bc img to text ratio > .5")
         return True    
