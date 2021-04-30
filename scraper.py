@@ -196,7 +196,7 @@ def get_url_base():
         base = baseList[0] + "//" +  baseList[1]
         return base
 
-    config.logger.error("Current URL: " + config.current_url + " doesn't have multiple elements")
+    config.logger.error("Current URL: \"" + config.current_url + "\" doesn't have multiple elements")
     # print("Current URL: " + config.current_url + " doesn't have multiple elements")
     return baseList[0]
     
@@ -251,6 +251,9 @@ def extract_next_links(url, resp):
     config.logger.info("Enter method extract_next_links()")
     # print("Enter method extract_next_links()")
     return_urls = []
+
+    if is_dead_url(resp):
+        return []
 
     response_text = resp.raw_response.content
     soup_text = BeautifulSoup(response_text, 'html.parser')
