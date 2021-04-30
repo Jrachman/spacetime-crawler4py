@@ -301,15 +301,16 @@ def complete_logs():
     # print("LONGEST PAGE FOUND: url = " + str(config.longest_page[0]) + " , num of tokens = " + str(config.longest_page[1]))
     
     ### TOP 50 most common words
-    sorted_tokens = {k: v for k, v in sorted(config.token_frequency_masterlist.items(), key=(lambda x:x[1]), reverse=True)}
+    sorted_tokens = {k: v for k, v in sorted(config.token_frequency_masterlist.items(), key=lambda x:x[1], reverse=True)}
     top_tokens = dict()
     index = 0
-    for key, value in sorted_tokens():
+    for key, value in sorted_tokens.items():
         if(index > 50):
             break
         else:
             top_tokens[key] = value
     
+    print(top_tokens)
     config.logger.info("TOP 50 TOKENS: " + str(top_tokens))
     # print("TOP 50 TOKENS: " + str(top_tokens))
     
@@ -352,7 +353,7 @@ def is_valid(url): # need to change
         # print("Parsed path: "+ str(parsed.path))
         
         if parsed.scheme == '' and parsed.netloc == '' and parsed.path == '':
-            config.logger.info("is_valid is FALSE; url : " + url)
+            config.logger.info("is_valid is FALSE 1; url : " + url)
             #print("is_valid is FALSE; url : " + url)
             return {
                 "is_valid": False,
@@ -376,7 +377,7 @@ def is_valid(url): # need to change
             elif parsed.scheme == '':
                 return is_valid("https:" + url)
             else:
-                config.logger.info("is_valid is FALSE; url : " + url)
+                config.logger.info("is_valid is FALSE 2; url : " + url)
                 #print("is_valid is FALSE; url : " + url)
                 return {
                     "is_valid": False,
@@ -396,7 +397,7 @@ def is_valid(url): # need to change
             + r"|epub|dll|cnf|tgz|sha1"
             + r"|thmx|mso|arff|rtf|jar|csv"
             + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$", parsed.path.lower()):
-            config.logger.info("is_valid is FALSE; url : " + url)
+            config.logger.info("is_valid is FALSE 3; url : " + url)
             #print("is_valid is FALSE; url : " + url)
             return {
                 "is_valid": False,
@@ -404,8 +405,8 @@ def is_valid(url): # need to change
             }
         
         # add check to match with allowed URLs -- need to test
-        if re.match(r"^.*((.ics.uci.edu|.cs.uci.edu|.informatics.uci.edu|.stat.uci.edu)\/).*",url) or \
-            re.match(r"^.*(today.uci.edu/department/information_computer_sciences\/).*",url):
+        if re.match(r"^.*((.ics.uci.edu|.cs.uci.edu|.informatics.uci.edu|.stat.uci.edu)).*",url) or \
+            re.match(r"^.*(today.uci.edu/department/information_computer_sciences).*",url):
             config.logger.info("is_valid is TRUE; url : " + url)
             #print("is_valid is TRUE; url : " + url)
             return {
@@ -413,7 +414,7 @@ def is_valid(url): # need to change
                 "new_url": urldefrag(url).url
             }
 
-        config.logger.info("is_valid is FALSE; url : " + url)
+        config.logger.info("is_valid is FALSE 4; url : " + url)
         #print("is_valid is FALSE; url : " + url)
         return {
             "is_valid": False,
