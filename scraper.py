@@ -73,7 +73,7 @@ def scraper(url, resp):
     if (len(config.all_urls_traversed) >= 50000):
         #TODO: One final failsafe? Cap the number of links that can be traversed at ~50,000?
         config.logger.info("TRAVERSAL LIMIT REACHED (50000 links) -- terminating.")
-        # print("TRAVERSAL LIMIT REACHED (3000 links) -- terminating.")
+        # print("TRAVERSAL LIMIT REACHED (50000 links) -- terminating.")
 
         return []
     
@@ -121,15 +121,15 @@ def is_large(response_text, response_tokens): # We need to find a measure by whi
         return True    
 
     # limit by amount of tokens - overestimate first
-    if len(response_tokens) > 1750:
+    if len(response_tokens) > 3500:
         config.logger.info("Return True bc greater than 1750 response tokens")
         # should overestimate to make sure we don't throw out good links 
         # thought process:
         # - a 5-page essay is about 2.5k words
         # - unique words equal approximately 10-20% of the total words in an essay 
         #   (e.g., 2.5k x 0.1 = 250)
-        # - with this, we determined ~double a 5-page essay and 25% unique words would be too large
-        #   (e.g., 2.5k x 2 = 5k x 0.25 = 1750 tokens max)
+        # - with this, we determined ~double a 5-page essay and 50% unique words would be too large
+        #   (e.g., 2.5k x 2 = 5k x 0.50 = 3500 tokens max)
         return True
 
     return False
@@ -187,7 +187,7 @@ def is_similar(response_tokens):
     config.logger.info("similarity: " + str(cosine))
 
     #TODO: CHECK ON THESE VALUES/IF THEY'RE REASONABLE!!
-    if (cosine > 0.80):
+    if (cosine > 0.95):
         return True
     else:
         return False
